@@ -9,17 +9,69 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 /**
- * Mapper: Reads line by line, split them into words. Emit <word, 1> pairs.
+ * Mapper: Reads line by line. Emit <"US", segment> pairs.
  */
 public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-        // tokenize into words.
-        StringTokenizer itr = new StringTokenizer(value.toString());
-        // emit word, count pairs.
-        while (itr.hasMoreTokens()) {
-            context.write(new Text(itr.nextToken()), new IntWritable(1));
+
+        //read one line of segment
+        String segment = value.toString();
+
+        String summaryLevel = segment.substring(10,3);
+        String logicalRecordPartNumber = segment.substring(24,4);
+
+        if (summaryLevel.equals("100")){
+
+            //get all the fields of a segment
+
+
+            //Q1 Tenure
+            Tenure tenure = null;
+
+            if (logicalRecordPartNumber.equals("2")) {
+                IntWritable ownerOccupied = new IntWritable(Integer.valueOf(segment.substring(1803, 1803+9)));
+                IntWritable renterOccupied = new IntWritable(Integer.valueOf(segment.substring(1812,1812+9)));
+                tenure = new Tenure(ownerOccupied,renterOccupied);
+            }
+
+
+
+
+            //Q2:
+            // population by sex
+            // Gender by Marital Status
+
+            PopulationBySex populationBySex = null;
+            GenderByMaritalStatus genderByMaritalStatus = null;
+
+            if (logicalRecordPartNumber.equals("1")) {
+
+                IntWritable totalMen  = new IntWritable(Integer.valueOf(segment.substring(363,363+9)));
+                IntWritable totalWomen = new IntWritable(Integer.valueOf(segment.substring(372,372+9)));
+                populationBySex = new PopulationBySex(totalMen,totalWomen);
+
+                IntWritable neverMarriedMen   = new IntWritable(Integer.valueOf(segment.substring(4422,4422+9)));
+                IntWritable neverMarriedWomen = new IntWritable(Integer.valueOf(segment.substring(4467,4467+9)));
+                IntWritable marriedMen        = new IntWritable(Integer.valueOf(segment.substring(4431,4431+9))+Integer.valueOf(segment.substring(4440,4440+9))+Integer.valueOf(segment.substring(4449,4449+9)));
+                IntWritable marriedWomen      = new IntWritable(Integer.valueOf(segment.substring(4476,4476+9))+Integer.valueOf(segment.substring(444485,4485+9))+Integer.valueOf(segment.substring(4494,4494+9)));
+                genderByMaritalStatus = new GenderByMaritalStatus(neverMarriedMen,marriedMen,neverMarriedWomen,marriedWomen);
+                
+            }
+
+            
+
+
+
+
+            
+            
+
+
         }
+        //emit <"US", >
+        //    context.write(new Text(itr.nextToken()), new IntWritable(1));
+
     }
 }
