@@ -24,10 +24,11 @@ public class Segment implements Writable {
     private ValueOwnerOccupied valueOwnerOccupied;
     private ValueOfRental valueOfRental ;
     private RoomNumberPerHouse roomNumberPerHouse;
+    private StatePopulation statePopulation;
     private ElderlyPeople elderlyPeople;
 
 
-    public Segment(Text state, Tenure tenure, PopulationBySex populationBySex, GenderByMaritalStatus genderByMaritalStatus, AgeDistributionByGender_Hispanic ageDistributionByGender_hispanic, UrbanAndRuralHouseholds urbanAndRuralHouseholds, ValueOwnerOccupied valueOwnerOccupied, ValueOfRental valueOfRental, RoomNumberPerHouse roomNumberPerHouse, ElderlyPeople elderlyPeople) {
+    public Segment(Text state, Tenure tenure, PopulationBySex populationBySex, GenderByMaritalStatus genderByMaritalStatus, AgeDistributionByGender_Hispanic ageDistributionByGender_hispanic, UrbanAndRuralHouseholds urbanAndRuralHouseholds, ValueOwnerOccupied valueOwnerOccupied, ValueOfRental valueOfRental, RoomNumberPerHouse roomNumberPerHouse, StatePopulation statePopulation, ElderlyPeople elderlyPeople) {
         this.state = state;
         this.tenure = tenure;
         this.populationBySex = populationBySex;
@@ -37,6 +38,7 @@ public class Segment implements Writable {
         this.valueOwnerOccupied = valueOwnerOccupied;
         this.valueOfRental = valueOfRental;
         this.roomNumberPerHouse = roomNumberPerHouse;
+        this.statePopulation = statePopulation;
         this.elderlyPeople = elderlyPeople;
     }
 
@@ -47,11 +49,12 @@ public class Segment implements Writable {
         populationBySex.readFields(dataInput);
         genderByMaritalStatus.readFields(dataInput);
         ageDistributionByGender_hispanic.readFields(dataInput);
-        this.urbanAndRuralHouseholds.readFields(dataInput);
-        this.valueOwnerOccupied.readFields(dataInput);
-        this.valueOfRental.readFields(dataInput);
-        this.roomNumberPerHouse.readFields(dataInput);
-        this.elderlyPeople.readFields(dataInput);
+        urbanAndRuralHouseholds.readFields(dataInput);
+        valueOwnerOccupied.readFields(dataInput);
+        valueOfRental.readFields(dataInput);
+        roomNumberPerHouse.readFields(dataInput);
+        statePopulation.readFields(dataInput);
+        elderlyPeople.readFields(dataInput);
 
     }
 
@@ -62,11 +65,12 @@ public class Segment implements Writable {
         populationBySex.write(dataOutput);
         genderByMaritalStatus.write(dataOutput);
         ageDistributionByGender_hispanic.write(dataOutput);
-        this.urbanAndRuralHouseholds.write(dataOutput);
-        this.valueOwnerOccupied.write(dataOutput);
-        this.valueOfRental.write(dataOutput);
-        this.roomNumberPerHouse.write(dataOutput);
-        this.elderlyPeople.write(dataOutput);
+        urbanAndRuralHouseholds.write(dataOutput);
+        valueOwnerOccupied.write(dataOutput);
+        valueOfRental.write(dataOutput);
+        roomNumberPerHouse.write(dataOutput);
+        statePopulation.write(dataOutput);
+        elderlyPeople.write(dataOutput);
     }
 
     public Text getState() {
@@ -103,6 +107,10 @@ public class Segment implements Writable {
 
     public RoomNumberPerHouse getRoomNumberPerHouse() {
         return roomNumberPerHouse;
+    }
+
+    public StatePopulation getStatePopulation() {
+        return statePopulation;
     }
 
     public ElderlyPeople getElderlyPeople() {

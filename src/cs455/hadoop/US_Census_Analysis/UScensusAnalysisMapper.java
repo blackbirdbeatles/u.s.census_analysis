@@ -58,7 +58,16 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Seg
                 
             }
 
-            Segment segmentObject = new Segment(new Text(state), tenure, populationBySex,genderByMaritalStatus,null,null,null,null,null,null);
+            //Q3-Q8 default sub-class initialization
+            AgeDistributionByGender_Hispanic ageDistributionByGender_Hispanic = new AgeDistributionByGender_Hispanic();
+            UrbanAndRuralHouseholds urbanAndRuralHouseholds = new UrbanAndRuralHouseholds();
+            ValueOwnerOccupied valueOwnerOccupied = new ValueOwnerOccupied();
+            ValueOfRental valueOfRental = new ValueOfRental();
+            RoomNumberPerHouse roomNumberPerHouse = new RoomNumberPerHouse();
+            StatePopulation statePopulation = new StatePopulation();
+            ElderlyPeople elderlyPeople = new ElderlyPeople();
+
+            Segment segmentObject = new Segment(new Text(state), tenure, populationBySex,genderByMaritalStatus,ageDistributionByGender_Hispanic,urbanAndRuralHouseholds,valueOwnerOccupied,valueOfRental,roomNumberPerHouse,statePopulation, elderlyPeople);
             context.write(new Text("U.S."), segmentObject);
         }
         //emit <"US", Segment.class >
