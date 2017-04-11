@@ -18,8 +18,8 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Seg
         //read one line of segment
         String segment = value.toString();
 
-        String summaryLevel = segment.substring(10,3);
-        String logicalRecordPartNumber = segment.substring(24,4);
+        String summaryLevel = segment.substring(10,10+3);
+        String logicalRecordPartNumber = segment.substring(24,24+4);
         String state = segment.substring(8,8+2);
 
         if (summaryLevel.equals("100")){
@@ -28,7 +28,7 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Seg
 
 
             //Q1 Tenure
-            Tenure tenure = null;
+            Tenure tenure = new Tenure();
 
             if (logicalRecordPartNumber.equals("2")) {
                 IntWritable ownerOccupied = new IntWritable(Integer.valueOf(segment.substring(1803, 1803+9)));
@@ -43,8 +43,8 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Seg
             // population by sex
             // Gender by Marital Status
 
-            PopulationBySex populationBySex = null;
-            GenderByMaritalStatus genderByMaritalStatus = null;
+            PopulationBySex populationBySex = new PopulationBySex();
+            GenderByMaritalStatus genderByMaritalStatus = new GenderByMaritalStatus();
 
             if (logicalRecordPartNumber.equals("1")) {
 
@@ -54,15 +54,12 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Seg
 
                 IntWritable neverMarriedMen   = new IntWritable(Integer.valueOf(segment.substring(4422,4422+9)));
                 IntWritable neverMarriedWomen = new IntWritable(Integer.valueOf(segment.substring(4467,4467+9)));
-                IntWritable marriedMen        = new IntWritable(Integer.valueOf(segment.substring(4431,4431+9))+Integer.valueOf(segment.substring(4440,4440+9))+Integer.valueOf(segment.substring(4449,4449+9)));
-                IntWritable marriedWomen      = new IntWritable(Integer.valueOf(segment.substring(4476,4476+9))+Integer.valueOf(segment.substring(4485,4485+9))+Integer.valueOf(segment.substring(4494,4494+9)));
-                genderByMaritalStatus = new GenderByMaritalStatus(neverMarriedMen,marriedMen,neverMarriedWomen,marriedWomen);
+                genderByMaritalStatus = new GenderByMaritalStatus(neverMarriedMen,neverMarriedWomen);
                 
             }
 
-
-            Segment segment1 = new Segment(new Text(state), tenure, null,null,null,null,null,null,null,null);
-            context.write(new Text("U.S."), segment1);
+            Segment segmentObject = new Segment(new Text(state), tenure, populationBySex,genderByMaritalStatus,null,null,null,null,null,null);
+            context.write(new Text("U.S."), segmentObject);
         }
         //emit <"US", Segment.class >
 

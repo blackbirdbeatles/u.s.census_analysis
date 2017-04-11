@@ -7,6 +7,7 @@ import org.apache.hadoop.io.Writable;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by MyGarden on 4/9/17.
@@ -120,6 +121,10 @@ class Tenure implements Writable{
         this.ownerOccupied = ownerOccupied;
         this.renterOccupied = renterOccupied;
     }
+    public Tenure(){
+        this.ownerOccupied  = new IntWritable(0);
+        this.renterOccupied = new IntWritable(0);
+    }
 
     @Override
     public void readFields(DataInput dataInput) throws IOException {
@@ -155,6 +160,11 @@ class PopulationBySex implements Writable{
         this.totalWomen = totalWomen;
     }
 
+    public PopulationBySex(){
+        this.totalMen   = new IntWritable(0);
+        this.totalWomen = new IntWritable(0);
+    }
+
     @Override
     public void readFields(DataInput in) throws IOException{
 
@@ -180,51 +190,39 @@ class PopulationBySex implements Writable{
 class GenderByMaritalStatus implements Writable{
 
     private IntWritable neverMarriedMen;
-    private IntWritable marriedMen;
-
     private IntWritable neverMarriedWomen;
-    private IntWritable marriedWomen;
 
 
-    public GenderByMaritalStatus(IntWritable neverMarriedMen, IntWritable marriedMen, IntWritable neverMarriedWomen, IntWritable marriedWomen) {
+    public GenderByMaritalStatus(IntWritable neverMarriedMen, IntWritable neverMarriedWomen) {
         neverMarriedMen   = neverMarriedMen;
-        marriedMen        = marriedMen;
         neverMarriedWomen = neverMarriedWomen;
-        marriedWomen      = marriedWomen;
+    }
+
+    public GenderByMaritalStatus(){
+        this.neverMarriedMen   = new IntWritable(0);
+        this.neverMarriedWomen = new IntWritable(0);
     }
 
     @Override
     public void readFields(DataInput in) throws IOException{
         neverMarriedMen.readFields(in);
-        marriedMen.readFields(in);
         neverMarriedWomen.readFields(in);
-        marriedWomen.readFields(in);
-
     }
 
     @Override
     public void write(DataOutput out) throws IOException{
         neverMarriedMen.write(out);
-        marriedMen.write(out);
         neverMarriedWomen.write(out);
-        marriedWomen.write(out);
     }
 
     public IntWritable getNeverMarriedMen() {
         return neverMarriedMen;
     }
 
-    public IntWritable getMarriedMen() {
-        return marriedMen;
-    }
-
     public IntWritable getNeverMarriedWomen() {
         return neverMarriedWomen;
     }
 
-    public IntWritable getMarriedWomen() {
-        return marriedWomen;
-    }
 }
 
 
@@ -237,7 +235,6 @@ class AgeDistributionByGender_Hispanic implements Writable{
     private IntWritable aged30to39Men;
     private IntWritable populationOfHispanicsMen;
     private IntWritable totalMen;
-
     private IntWritable aged18andBelow18Women;
     private IntWritable aged19to29Women;
     private IntWritable aged30to39Women;
@@ -256,6 +253,21 @@ class AgeDistributionByGender_Hispanic implements Writable{
         this.populationOfHispanicsWomen = populationOfHispanicsWomen;
         this.totalWomen = totalWomen;
     }
+    public AgeDistributionByGender_Hispanic(){
+         aged18andBelow18Men       = new IntWritable(0);
+         aged19to29Men             = new IntWritable(0);
+         aged30to39Men             = new IntWritable(0);
+         populationOfHispanicsMen  = new IntWritable(0);
+         totalMen                  = new IntWritable(0);
+         aged18andBelow18Women     = new IntWritable(0);
+         aged19to29Women           = new IntWritable(0);
+         aged30to39Women           = new IntWritable(0);
+         populationOfHispanicsWomen= new IntWritable(0);
+         totalWomen                = new IntWritable(0);
+    }
+
+
+
 
     @Override
     public void readFields(DataInput in) throws IOException{
@@ -271,7 +283,6 @@ class AgeDistributionByGender_Hispanic implements Writable{
        aged30to39Women.readFields(in);
        populationOfHispanicsWomen.readFields(in);
        totalWomen.readFields(in);
-
 
 
     }
@@ -346,6 +357,14 @@ class UrbanAndRuralHouseholds implements Writable{
         this.totalHouseholds = totalHouseholds;
     }
 
+
+    public UrbanAndRuralHouseholds(){
+
+       urbanHouseholds = new IntWritable(0);
+       ruralHouseholds = new IntWritable(0);
+       totalHouseholds = new IntWritable(0);
+
+    }
     @Override
     public void readFields(DataInput in) throws IOException{
 
@@ -378,130 +397,159 @@ class UrbanAndRuralHouseholds implements Writable{
     }
 }
 
-//Q5: median value of houses occupied by owners
+//Q5: median value of houses occupied by owners, 20 ranges of value
 class ValueOwnerOccupied implements Writable{
 
-    private Text range;
-    private IntWritable value;
+    private ArrayList<IntWritable> value;
 
-    public ValueOwnerOccupied(Text range, IntWritable value) {
-        this.range = range;
+    public ValueOwnerOccupied(ArrayList<IntWritable> value) {
         this.value = value;
+    }
+
+    public ValueOwnerOccupied(){
+        for (int i = 0; i < 20; i++)
+            value.add(new IntWritable(0));
     }
 
     @Override
     public void readFields(DataInput in) throws IOException{
-
-        range.readFields(in);
-        value.readFields(in);
+        for (int i = 0; i < 20; i++)
+            value.get(i).readFields(in);
     }
 
     @Override
     public void write(DataOutput out) throws IOException{
-         range.write(out);
-         value.write(out);
+        for (int i = 0; i < 20; i++)
+            value.get(i).write(out);
 
     }
 
-    public Text getRange() {
-        return range;
-    }
 
-    public IntWritable getValue() {
+    public ArrayList<IntWritable> getValue() {
         return value;
     }
 }
 
-//Q6: median pay of rent
+//Q6: median pay of rent, 17 ranges of rental
 class ValueOfRental implements Writable{
 
-    private Text range;
-    private IntWritable value;
 
-    public ValueOfRental(Text range, IntWritable value) {
-        this.range = range;
+    private ArrayList<IntWritable> value;
+
+    public ValueOfRental(ArrayList<IntWritable> value) {
         this.value = value;
+    }
+
+    public ValueOfRental(){
+        for (int i = 0; i < 17; i++)
+            value.add(new IntWritable(0));
     }
 
     @Override
     public void readFields(DataInput in) throws IOException{
-         range.readFields(in);
-         value.readFields(in);
+        for (int i = 0; i < 17; i++)
+            value.get(i).readFields(in);
 
 
     }
 
     @Override
     public void write(DataOutput out) throws IOException{
-        range.write(out);
-        value.write(out);
+        for (int i = 0; i < 17; i++)
+            value.get(i).write(out);
 
     }
 
-    public Text getRange() {
-        return range;
-    }
-
-    public IntWritable getValue() {
+    public ArrayList<IntWritable> getValue() {
         return value;
     }
 }
 
-//Q7: 95th percentile of the number of rooms per house
+//Q7: 95th percentile of the number of rooms per house, 9 kinds of houses
 class RoomNumberPerHouse implements Writable{
 
-    private IntWritable numberOfRooms;
-    private IntWritable ActualFrequency;
+    private ArrayList<IntWritable> distriburion;
 
-    public RoomNumberPerHouse(IntWritable numberOfRooms, IntWritable actualFrequency) {
-        numberOfRooms   = numberOfRooms;
-        ActualFrequency = actualFrequency;
+    public RoomNumberPerHouse(ArrayList<IntWritable> distriburion) {
+
+        this.distriburion = distriburion;
+
+    }
+
+    public RoomNumberPerHouse(){
+        for (int i=0; i < 9; i++)
+            distriburion.add(new IntWritable(0));
     }
 
     @Override
     public void readFields(DataInput in) throws IOException{
-          numberOfRooms.readFields(in);
-        ActualFrequency.readFields(in);
+        for (int i=0; i < 9; i++)
+            distriburion.get(i).readFields(in);
     }
 
     @Override
     public void write(DataOutput out) throws IOException{
-          numberOfRooms.write(out);
-        ActualFrequency.write(out);
+        for (int i=0; i < 9; i++)
+            distriburion.get(i).write(out);
     }
 
-    public IntWritable getNumberOfRooms() {
-        return numberOfRooms;
-    }
 
-    public IntWritable getActualFrequency() {
-        return ActualFrequency;
+    public ArrayList<IntWritable> getDistriburion() {
+        return distriburion;
     }
 }
 
-//Q8:
-//elderly: age more than 85 (exclusive)
-class ElderlyPeople implements Writable{
+//Q8: elderly people rate
 
-    private IntWritable population;
+class StatePopulation implements Writable {
 
-    public ElderlyPeople(IntWritable population) {
-        population = population;
+    private IntWritable statePopulation;
+
+    public StatePopulation(IntWritable statePopulation) {
+        this.statePopulation = statePopulation;
+    }
+
+    public StatePopulation(){
+        statePopulation = new IntWritable(0);
     }
 
     @Override
     public void readFields(DataInput dataInput) throws IOException {
-        population.readFields(dataInput);
+        statePopulation.readFields(dataInput);
+    }
+
+    @Override
+    public void write(DataOutput dataOutput) throws IOException {
+        statePopulation.write(dataOutput);
+    }
+}
+
+
+//elderly: age more than 85 (exclusive)
+class ElderlyPeople implements Writable{
+
+    private IntWritable agedOver85population;
+
+    public ElderlyPeople(IntWritable agedOver85population) {
+        this.agedOver85population = agedOver85population;
+    }
+    public ElderlyPeople(){
+        agedOver85population = new IntWritable(0);
+    }
+
+    @Override
+    public void readFields(DataInput dataInput) throws IOException {
+        agedOver85population.readFields(dataInput);
 
     }
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {
-        population.write(dataOutput);
+        agedOver85population.write(dataOutput);
     }
 
-    public IntWritable getPopulation() {
-        return population;
+    public IntWritable getAgedOver85population() {
+        return agedOver85population;
     }
 }
 

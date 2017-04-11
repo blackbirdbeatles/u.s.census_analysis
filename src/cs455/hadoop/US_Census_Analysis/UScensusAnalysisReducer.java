@@ -38,9 +38,7 @@ public class UScensusAnalysisReducer extends Reducer<Text, Iterable<Segment>, Te
         ansPerState.put("totalWomen", 0);
 
         ansPerState.put("neverMarriedMen", 0);
-        ansPerState.put("marriedMen", 0);
         ansPerState.put("neverMarriedWomen", 0);
-        ansPerState.put("marriedWomen", 0);
 
         //sum for Q3
         ansPerState.put("aged18andBelow18Men", 0);
@@ -85,7 +83,6 @@ public class UScensusAnalysisReducer extends Reducer<Text, Iterable<Segment>, Te
 
         //define the Hashtable ans
         ans = new HashMap<>();
-        problems = new ArrayList<>();
 
         for (Segment seg : values) {
             String state = seg.getState().toString();
@@ -105,22 +102,17 @@ public class UScensusAnalysisReducer extends Reducer<Text, Iterable<Segment>, Te
                 ansPerState.put("totalWomen", ansPerState.get("totalWomen") + populationBySex.getTotalWomen().get());
             }
 
-
-            /*
-            //Q3:
             GenderByMaritalStatus genderByMaritalStatus = seg.getGenderByMaritalStatus();
             if (genderByMaritalStatus!=null){
                 ansPerState.put("neverMarriedMen;" ,ansPerState.get("neverMarriedMen;" ) + genderByMaritalStatus.getNeverMarriedMen().get());
                 ansPerState.put("neverMarriedWomen",ansPerState.get("neverMarriedWomen") + genderByMaritalStatus.getNeverMarriedWomen().get());
-                ansPerState.put("marriedMen"       ,ansPerState.get("marriedMen"       ) + genderByMaritalStatus.getMarriedMen().get());
-                ansPerState.put("marriedWomen"     ,ansPerState.get("marriedWomen"     ) + genderByMaritalStatus.getMarriedWomen().get());
             }
-            */
+
         }
 
 
 
-        //print out
+        //Finally, print out answers
         Text spaceValue = new Text("");
 
         //Q1
@@ -161,7 +153,7 @@ public class UScensusAnalysisReducer extends Reducer<Text, Iterable<Segment>, Te
             //get variable from table
             Integer totalMen = tableForOneState.get(  "totalMen");
             Integer totalWomen = tableForOneState.get("totalWomen");
-            Integer   neverMarriedMen = tableForOneState.get("neverMarriedMen");  //TODO: delete married men and women
+            Integer   neverMarriedMen = tableForOneState.get("neverMarriedMen"); 
             Integer neverMarriedWomen = tableForOneState.get("neverMarriedWomen");
 
             //statistical arithmetics
