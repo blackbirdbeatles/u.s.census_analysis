@@ -1,17 +1,16 @@
 package cs455.hadoop.US_Census_Analysis;
 
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 /**
  * Mapper: Reads line by line. Emit <"US", segment> pairs.
  */
-public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
+public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Segment> {
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
@@ -21,6 +20,7 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Int
 
         String summaryLevel = segment.substring(10,3);
         String logicalRecordPartNumber = segment.substring(24,4);
+        String state = segment.substring(8,8+2);
 
         if (summaryLevel.equals("100")){
 
@@ -55,23 +55,17 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Int
                 IntWritable neverMarriedMen   = new IntWritable(Integer.valueOf(segment.substring(4422,4422+9)));
                 IntWritable neverMarriedWomen = new IntWritable(Integer.valueOf(segment.substring(4467,4467+9)));
                 IntWritable marriedMen        = new IntWritable(Integer.valueOf(segment.substring(4431,4431+9))+Integer.valueOf(segment.substring(4440,4440+9))+Integer.valueOf(segment.substring(4449,4449+9)));
-                IntWritable marriedWomen      = new IntWritable(Integer.valueOf(segment.substring(4476,4476+9))+Integer.valueOf(segment.substring(444485,4485+9))+Integer.valueOf(segment.substring(4494,4494+9)));
+                IntWritable marriedWomen      = new IntWritable(Integer.valueOf(segment.substring(4476,4476+9))+Integer.valueOf(segment.substring(4485,4485+9))+Integer.valueOf(segment.substring(4494,4494+9)));
                 genderByMaritalStatus = new GenderByMaritalStatus(neverMarriedMen,marriedMen,neverMarriedWomen,marriedWomen);
                 
             }
 
-            
 
-
-
-
-            
-            
-
-
+            Segment segment1 = new Segment(new Text(state), tenure, null,null,null,null,null,null,null,null);
+            context.write(new Text("U.S."), segment1);
         }
-        //emit <"US", >
-        //    context.write(new Text(itr.nextToken()), new IntWritable(1));
+        //emit <"US", Segment.class >
+
 
     }
 }

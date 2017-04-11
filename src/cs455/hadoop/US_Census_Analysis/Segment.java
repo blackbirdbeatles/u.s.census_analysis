@@ -67,6 +67,46 @@ public class Segment implements Writable {
         this.roomNumberPerHouse.write(dataOutput);
         this.elderlyPeople.write(dataOutput);
     }
+
+    public Text getState() {
+        return state;
+    }
+
+    public Tenure getTenure() {
+        return tenure;
+    }
+
+    public PopulationBySex getPopulationBySex() {
+        return populationBySex;
+    }
+
+    public GenderByMaritalStatus getGenderByMaritalStatus() {
+        return genderByMaritalStatus;
+    }
+
+    public AgeDistributionByGender_Hispanic getAgeDistributionByGender_hispanic() {
+        return ageDistributionByGender_hispanic;
+    }
+
+    public UrbanAndRuralHouseholds getUrbanAndRuralHouseholds() {
+        return urbanAndRuralHouseholds;
+    }
+
+    public ValueOwnerOccupied getValueOwnerOccupied() {
+        return valueOwnerOccupied;
+    }
+
+    public ValueOfRental getValueOfRental() {
+        return valueOfRental;
+    }
+
+    public RoomNumberPerHouse getRoomNumberPerHouse() {
+        return roomNumberPerHouse;
+    }
+
+    public ElderlyPeople getElderlyPeople() {
+        return elderlyPeople;
+    }
 }
 
 
@@ -93,6 +133,14 @@ class Tenure implements Writable{
         renterOccupied.write(dataOutput);
 
     }
+
+    public IntWritable getOwnerOccupied() {
+        return ownerOccupied;
+    }
+
+    public IntWritable getRenterOccupied() {
+        return renterOccupied;
+    }
 }
 
 
@@ -118,6 +166,14 @@ class PopulationBySex implements Writable{
     public void write(DataOutput out) throws IOException{
         totalMen.write(out);
         totalWomen.write(out);
+    }
+
+    public IntWritable getTotalMen() {
+        return totalMen;
+    }
+
+    public IntWritable getTotalWomen() {
+        return totalWomen;
     }
 }
 
@@ -152,6 +208,22 @@ class GenderByMaritalStatus implements Writable{
         marriedMen.write(out);
         neverMarriedWomen.write(out);
         marriedWomen.write(out);
+    }
+
+    public IntWritable getNeverMarriedMen() {
+        return neverMarriedMen;
+    }
+
+    public IntWritable getMarriedMen() {
+        return marriedMen;
+    }
+
+    public IntWritable getNeverMarriedWomen() {
+        return neverMarriedWomen;
+    }
+
+    public IntWritable getMarriedWomen() {
+        return marriedWomen;
     }
 }
 
@@ -219,6 +291,46 @@ class AgeDistributionByGender_Hispanic implements Writable{
        totalWomen.write(out);
 
     }
+
+    public IntWritable getAged18andBelow18Men() {
+        return aged18andBelow18Men;
+    }
+
+    public IntWritable getAged19to29Men() {
+        return aged19to29Men;
+    }
+
+    public IntWritable getAged30to39Men() {
+        return aged30to39Men;
+    }
+
+    public IntWritable getPopulationOfHispanicsMen() {
+        return populationOfHispanicsMen;
+    }
+
+    public IntWritable getTotalMen() {
+        return totalMen;
+    }
+
+    public IntWritable getAged18andBelow18Women() {
+        return aged18andBelow18Women;
+    }
+
+    public IntWritable getAged19to29Women() {
+        return aged19to29Women;
+    }
+
+    public IntWritable getAged30to39Women() {
+        return aged30to39Women;
+    }
+
+    public IntWritable getPopulationOfHispanicsWomen() {
+        return populationOfHispanicsWomen;
+    }
+
+    public IntWritable getTotalWomen() {
+        return totalWomen;
+    }
 }
 
 //Q4:
@@ -252,6 +364,18 @@ class UrbanAndRuralHouseholds implements Writable{
 
 
     }
+
+    public IntWritable getUrbanHouseholds() {
+        return urbanHouseholds;
+    }
+
+    public IntWritable getRuralHouseholds() {
+        return ruralHouseholds;
+    }
+
+    public IntWritable getTotalHouseholds() {
+        return totalHouseholds;
+    }
 }
 
 //Q5: median value of houses occupied by owners
@@ -277,6 +401,14 @@ class ValueOwnerOccupied implements Writable{
          range.write(out);
          value.write(out);
 
+    }
+
+    public Text getRange() {
+        return range;
+    }
+
+    public IntWritable getValue() {
+        return value;
     }
 }
 
@@ -305,6 +437,14 @@ class ValueOfRental implements Writable{
         value.write(out);
 
     }
+
+    public Text getRange() {
+        return range;
+    }
+
+    public IntWritable getValue() {
+        return value;
+    }
 }
 
 //Q7: 95th percentile of the number of rooms per house
@@ -329,6 +469,14 @@ class RoomNumberPerHouse implements Writable{
           numberOfRooms.write(out);
         ActualFrequency.write(out);
     }
+
+    public IntWritable getNumberOfRooms() {
+        return numberOfRooms;
+    }
+
+    public IntWritable getActualFrequency() {
+        return ActualFrequency;
+    }
 }
 
 //Q8:
@@ -350,6 +498,10 @@ class ElderlyPeople implements Writable{
     @Override
     public void write(DataOutput dataOutput) throws IOException {
         population.write(dataOutput);
+    }
+
+    public IntWritable getPopulation() {
+        return population;
     }
 }
 
