@@ -74,8 +74,14 @@ public class UScensusAnalysisCombiner extends Reducer<Text, Segment, Text, Segme
                 ansPerState.put("weightedPart" + String.valueOf(i), 0);
             }
 
-            //todo Q8: (the same as initialization in reducer) add key to hashmap , give 0 to be ready for addition,
+            //Q8
+            ansPerState.put("statePopulation", 0);
+            ansPerState.put("elderlyPeople", 0);
 
+
+            //Q9: (the same as initialization in reducer) add key to hashmap , give 0 to be ready for addition,
+            for (int i = 0 ; i < 3; i++)
+                ansPerState.put("duration" + String.valueOf(i), 0);
             //problems insertion:
             // problems.add("percentage of residnce were rented vs. owned");
 
@@ -164,8 +170,16 @@ public class UScensusAnalysisCombiner extends Reducer<Text, Segment, Text, Segme
                     ansPerState.put("weightedPart" + String.valueOf(i), ansPerState.get("weightedPart" +String.valueOf(i))+ weightedPart.get(i).get());
                 }
 
-                //todo Q8
+                //Q8
+                Integer statePopulation = seg.getStatePopulation().getStatePopulation().get();
+                Integer above85   = seg.getElderlyPeople().getAgedOver85population().get();
+                ansPerState.put("statePopulation", ansPerState.get("statePopulation") + statePopulation);
+                ansPerState.put("elderlyPeople", ansPerState.get("elderlyPeople") + above85 );
 
+                //Q9: the same as reducer, add value get from object into hashmap
+                ArrayList<IntWritable> duration = seg.getVacancyDuration().getDuration();
+                for (int i = 0; i < 3; i++)
+                    ansPerState.put("duration" + String.valueOf(i), ansPerState.get("duration" + String.valueOf(i)) + duration.get(i).get());
 
             }
 
@@ -187,6 +201,7 @@ public class UScensusAnalysisCombiner extends Reducer<Text, Segment, Text, Segme
             RoomNumberPerHouse roomNumberPerHouse = new RoomNumberPerHouse();
             StatePopulation statePopulation = new StatePopulation();
             ElderlyPeople elderlyPeople = new ElderlyPeople();
+            VacancyDuration vacancyDuration = new VacancyDuration();
 
 
             //fill value into the subclass
@@ -255,13 +270,24 @@ public class UScensusAnalysisCombiner extends Reducer<Text, Segment, Text, Segme
                 }
                 roomNumberPerHouse = new RoomNumberPerHouse(distribution, weightedPart);
 
-                //todo Q8
+                //Q8:
+                IntWritable stateP = new IntWritable(tableForOneState.get("statePopulation"));
+                statePopulation = new StatePopulation(stateP);
+
+                IntWritable above85  = new IntWritable(tableForOneState.get("elderlyPeople"));
+                elderlyPeople = new ElderlyPeople(above85);
+
+                //Q9
+                ArrayList<IntWritable> duration = new ArrayList<>();
+                for (int i = 0; i < 3; i++)
+                    duration.add(new IntWritable(tableForOneState.get("duration"+String.valueOf(i))));
+                vacancyDuration = new VacancyDuration(duration);
 
 
 
 
                 //create new (larger) segment Object, and emit the pair ("U.S.", newSegmentObject) out
-                Segment segmentObject = new Segment(state, tenure, populationBySex,genderByMaritalStatus,ageDistributionByGender_Hispanic,urbanAndRuralHouseholds,valueOwnerOccupied,valueOfRental,roomNumberPerHouse,statePopulation, elderlyPeople);
+                Segment segmentObject = new Segment(state, tenure, populationBySex,genderByMaritalStatus,ageDistributionByGender_Hispanic,urbanAndRuralHouseholds,valueOwnerOccupied,valueOfRental,roomNumberPerHouse,statePopulation, elderlyPeople, vacancyDuration);
                 context.write(new Text("U.S."), segmentObject);
             }
 

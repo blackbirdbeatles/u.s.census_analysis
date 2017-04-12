@@ -70,8 +70,13 @@ public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> 
             ansPerState.put("distribution" + String.valueOf(i), 0);
             ansPerState.put("weightedPart" + String.valueOf(i), 0);
         }
-        //todo q8: initialize fields in hash map for one state to 0
+        //Q8
+        ansPerState.put("statePopulation", 0);
+        ansPerState.put("elderlyPeople", 0);
 
+        //Q9: initialize fields in hash map for one state to 0
+        for (int i = 0 ; i < 3; i++)
+            ansPerState.put("duration" + String.valueOf(i), 0);
 
         /*
 
@@ -152,9 +157,16 @@ public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> 
                 ansPerState.put("weightedPart" + String.valueOf(i), ansPerState.get("weightedPart" + String.valueOf(i)) + weightedPart.get(i).get());
             }
 
-            //todo q8: calculation: add number in object to hashmap
+            //Q8:
+            Integer statePopulation = seg.getStatePopulation().getStatePopulation().get();
+            Integer above85   = seg.getElderlyPeople().getAgedOver85population().get();
+            ansPerState.put("statePopulation", ansPerState.get("statePopulation") + statePopulation);
+            ansPerState.put("elderlyPeople", ansPerState.get("elderlyPeople") + above85 );
 
-
+            //Q9: calculation: add number in object to hashmap
+            ArrayList<IntWritable> duration = seg.getVacancyDuration().getDuration();
+            for (int i = 0; i < 3; i++)
+                ansPerState.put("duration" + String.valueOf(i), ansPerState.get("duration" + String.valueOf(i)) + duration.get(i).get());
         }
 
 
@@ -487,11 +499,75 @@ public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> 
         //result print (with format)
         context.write(theState, pencentile95th);
 
+        //Q8:
+        context.write(new Text("Q8: The state has highest elderly rate"), spaceValue);
+
+        //for certain state (entry of hashmap), calculate total elderly people and state population
+
+        ArrayList<StateToAverage> stateListOfElderlyRate = new ArrayList<>();
+        for (Map.Entry<String, HashMap<String,Integer>> entry : ans.entrySet()) {
+
+            String state = entry.getKey();
+            HashMap<String, Integer> tableForOneState = entry.getValue();
+
+            //get variable from table
+            int elderlyForOneState = tableForOneState.get("elderlyPeople");
+            int statePopulation = tableForOneState.get("statePopulation");
+
+            //elderly rate of this state
+            Double elderlyRate = new Double(0.0);
+            if (statePopulation!= 0) {
+                elderlyRate = elderlyForOneState * 1.0 / statePopulation * 100;
+                stateListOfElderlyRate.add(new StateToAverage(state, elderlyRate));
+            }
+        }
+
+
+        //to calculate the highest elderly rate
+        Collections.sort(stateListOfElderlyRate);
+        StateToAverage theHighestElderlyRateState = new StateToAverage("Initialization", 0.0);
+        theHighestElderlyRateState = stateListOfElderlyRate.get(stateListOfElderlyRate.size()-1);
+        Text theHighestState = new Text(String.valueOf(theHighestElderlyRateState.getState()));
+        Text highestElderlyRate = new Text(String.valueOf(theHighestElderlyRateState.getAverage())+"%");
+        //result print (with format)
+        context.write(theHighestState, highestElderlyRate);
 
 
 
+        //Q9: print out
+        context.write(new Text("Q9:  Index of popularity of rental market for each state"), spaceValue);
+        for (Map.Entry<String, HashMap<String,Integer>> entry : ans.entrySet()){
+            HashMap<String ,Integer> tableForOneState = entry.getValue();
 
-        //todo q8: print out
+            //get variable from table
+            ArrayList<Integer> duration = new ArrayList<>();
+            int totalVacantRentHouses = 0;
+            for (int i = 0; i < 3; i++) {
+                duration.add(tableForOneState.get("duration" + String.valueOf(i)));
+                totalVacantRentHouses +=duration.get(i);
+            }
+
+            //statistical arithmetics
+            Double indexOfRentMarket = new Double(0.0);
+            if (totalVacantRentHouses!=0) {
+
+                indexOfRentMarket = duration.get(0) * 1.0 / totalVacantRentHouses * 100;
+                String result_indexOfRentMarket = String.format("%.2f", indexOfRentMarket);
+
+                //convert to String str
+
+                String s = new String("");
+                for (int i = 0; i < indexOfRentMarket; i+=4)
+                    s = s+"*";
+                Text blocks = new Text(s);
+                //result print (with format)
+                String outKey = entry.getKey() + "  " + result_indexOfRentMarket+"%";
+                context.write(new Text(outKey), blocks);
+            }
+        }
+
+
+
 
 
 

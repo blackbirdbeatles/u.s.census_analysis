@@ -26,9 +26,10 @@ public class Segment implements Writable {
     private RoomNumberPerHouse roomNumberPerHouse;
     private StatePopulation statePopulation;
     private ElderlyPeople elderlyPeople;
+    private VacancyDuration vacancyDuration;
 
 
-    public Segment(Text state, Tenure tenure, PopulationBySex populationBySex, GenderByMaritalStatus genderByMaritalStatus, AgeDistributionByGender_Hispanic ageDistributionByGender_hispanic, UrbanAndRuralHouseholds urbanAndRuralHouseholds, ValueOwnerOccupied valueOwnerOccupied, ValueOfRental valueOfRental, RoomNumberPerHouse roomNumberPerHouse, StatePopulation statePopulation, ElderlyPeople elderlyPeople) {
+    public Segment(Text state, Tenure tenure, PopulationBySex populationBySex, GenderByMaritalStatus genderByMaritalStatus, AgeDistributionByGender_Hispanic ageDistributionByGender_hispanic, UrbanAndRuralHouseholds urbanAndRuralHouseholds, ValueOwnerOccupied valueOwnerOccupied, ValueOfRental valueOfRental, RoomNumberPerHouse roomNumberPerHouse, StatePopulation statePopulation, ElderlyPeople elderlyPeople, VacancyDuration vacancyDuration) {
         this.state = state;
         this.tenure = tenure;
         this.populationBySex = populationBySex;
@@ -40,6 +41,7 @@ public class Segment implements Writable {
         this.roomNumberPerHouse = roomNumberPerHouse;
         this.statePopulation = statePopulation;
         this.elderlyPeople = elderlyPeople;
+        this.vacancyDuration = vacancyDuration;
     }
 
     public Segment(){
@@ -57,6 +59,7 @@ public class Segment implements Writable {
         roomNumberPerHouse = new RoomNumberPerHouse();
         statePopulation = new StatePopulation();
         elderlyPeople = new ElderlyPeople();
+        vacancyDuration = new VacancyDuration();
 
     }
 
@@ -73,6 +76,7 @@ public class Segment implements Writable {
         roomNumberPerHouse.readFields(dataInput);
         statePopulation.readFields(dataInput);
         elderlyPeople.readFields(dataInput);
+        vacancyDuration.readFields(dataInput);
 
     }
 
@@ -89,6 +93,7 @@ public class Segment implements Writable {
         roomNumberPerHouse.write(dataOutput);
         statePopulation.write(dataOutput);
         elderlyPeople.write(dataOutput);
+        vacancyDuration.write(dataOutput);
     }
 
     public Text getState() {
@@ -133,6 +138,10 @@ public class Segment implements Writable {
 
     public ElderlyPeople getElderlyPeople() {
         return elderlyPeople;
+    }
+
+    public VacancyDuration getVacancyDuration() {
+        return vacancyDuration;
     }
 }
 
@@ -547,6 +556,10 @@ class StatePopulation implements Writable {
     @Override
     public void write(DataOutput dataOutput) throws IOException {
         statePopulation.write(dataOutput);
+    }
+
+    public IntWritable getStatePopulation() {
+        return statePopulation;
     }
 }
 

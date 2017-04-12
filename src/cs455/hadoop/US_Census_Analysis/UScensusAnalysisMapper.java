@@ -28,7 +28,7 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Seg
         //If record is on the level we want , get all the fields of a segment
         if (summaryLevel.equals("100")){
 
-            //Q1-Q8 default sub-class initialization
+            //Q1-Q9 default sub-class initialization
             Tenure tenure = new Tenure();
             PopulationBySex populationBySex = new PopulationBySex();
             GenderByMaritalStatus genderByMaritalStatus = new GenderByMaritalStatus();
@@ -39,6 +39,7 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Seg
             RoomNumberPerHouse roomNumberPerHouse = new RoomNumberPerHouse();
             StatePopulation statePopulation = new StatePopulation();
             ElderlyPeople elderlyPeople = new ElderlyPeople();
+            VacancyDuration vacancyDuration = new VacancyDuration();
 
             //Q1:Tenure
             if (logicalRecordPartNumber.equals("0002")) {
@@ -159,9 +160,26 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Seg
                 roomNumberPerHouse = new RoomNumberPerHouse(distribution,weightedPart);
             }
 
-            //TODO Q8: get the data from dataset, populate it in a subclass
+            //Q8
+            if (logicalRecordPartNumber.equals("0001")) {
 
+                //get all ranges in arrayList value
+                IntWritable population = new IntWritable(Integer.valueOf(segment.substring(300, 300 + 9)));
+                IntWritable above85 = new IntWritable(Integer.valueOf(segment.substring(1065, 1065+9)));
 
+                statePopulation = new StatePopulation(population);
+                elderlyPeople = new ElderlyPeople(above85);
+            }
+
+            // Q9: get the data from dataset, populate it in a subclass
+            if (logicalRecordPartNumber.equals("0002")) {
+
+                //get number of houses for  different duration of different units
+                ArrayList<IntWritable> duration = new ArrayList<>();
+                for (int i = 3882; i <=3900; i+=9)
+                    duration.add(new IntWritable(Integer.valueOf(segment.substring(i, i+9))));
+                vacancyDuration = new VacancyDuration(duration);
+            }
 
 
 
@@ -170,7 +188,7 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Seg
 
 
             //create the Segmen object, emit <"U.S.", segmentObject>
-            Segment segmentObject = new Segment(new Text(state), tenure, populationBySex,genderByMaritalStatus,ageDistributionByGender_Hispanic,urbanAndRuralHouseholds,valueOwnerOccupied,valueOfRental,roomNumberPerHouse,statePopulation, elderlyPeople);
+            Segment segmentObject = new Segment(new Text(state), tenure, populationBySex,genderByMaritalStatus,ageDistributionByGender_Hispanic,urbanAndRuralHouseholds,valueOwnerOccupied,valueOfRental,roomNumberPerHouse,statePopulation, elderlyPeople, vacancyDuration);
             context.write(new Text("U.S."), segmentObject);
         }
 
