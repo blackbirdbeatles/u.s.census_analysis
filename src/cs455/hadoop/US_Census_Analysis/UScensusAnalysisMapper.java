@@ -125,7 +125,43 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Seg
                 urbanAndRuralHouseholds = new UrbanAndRuralHouseholds(urbanHouseholds, ruralHouseholds, notDefined);
             }
 
-            //TODO:Q5
+            //Q5
+            if (logicalRecordPartNumber.equals("0002")) {
+
+                //get all ranges in arrayList value
+                ArrayList<IntWritable> v = new ArrayList<>();
+                for (int i = 2928; i <=3099; i+=9)
+                    v.add(new IntWritable(Integer.valueOf(segment.substring(i, i+9))));
+                valueOwnerOccupied = new ValueOwnerOccupied(v);
+            }
+
+            //Q6
+            if (logicalRecordPartNumber.equals("0002")) {
+
+                //get all ranges in arrayList value
+                ArrayList<IntWritable> v = new ArrayList<>();
+                for (int i = 3450; i <=3585; i+=9)
+                    v.add(new IntWritable(Integer.valueOf(segment.substring(i, i+9))));
+                valueOfRental = new ValueOfRental(v);
+            }
+
+
+            //Q7
+            if (logicalRecordPartNumber.equals("0002")) {
+
+                //get all ranges in arrayList value
+                ArrayList<IntWritable> distribution = new ArrayList<>();
+                ArrayList<IntWritable> weightedPart = new ArrayList<>();
+                for (int i = 2388, j = 1; i <=2460; i+=9, j++) {
+                    distribution.add(new IntWritable(Integer.valueOf(segment.substring(i, i + 9))));
+                    weightedPart.add(new IntWritable((distribution.get(j-1).get())*j));
+                }
+                roomNumberPerHouse = new RoomNumberPerHouse(distribution,weightedPart);
+            }
+
+            //TODO Q8: get the data from dataset, populate it in a subclass
+
+
 
 
 

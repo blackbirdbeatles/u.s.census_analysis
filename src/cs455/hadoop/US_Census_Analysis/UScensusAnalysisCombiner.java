@@ -60,8 +60,21 @@ public class UScensusAnalysisCombiner extends Reducer<Text, Segment, Text, Segme
 
 
 
-            //TODO:Q5
+            //Q5:
+            for (int i = 0 ; i < 20; i++)
+                ansPerState.put("valueOwnerOccupied" + String.valueOf(i), 0);
 
+            //Q6
+            for (int i = 0 ; i < 16; i++)
+                ansPerState.put("valueRent" + String.valueOf(i), 0);
+
+            //Q7
+            for (int i = 0 ; i < 9; i++) {
+                ansPerState.put("distribution" + String.valueOf(i), 0);
+                ansPerState.put("weightedPart" + String.valueOf(i), 0);
+            }
+
+            //todo Q8: (the same as initialization in reducer) add key to hashmap , give 0 to be ready for addition,
 
             //problems insertion:
             // problems.add("percentage of residnce were rented vs. owned");
@@ -133,6 +146,25 @@ public class UScensusAnalysisCombiner extends Reducer<Text, Segment, Text, Segme
                 ansPerState.put("ruralHouseholds",ansPerState.get("ruralHouseholds") + urbanAndRuralHouseholds.getRuralHouseholds().get());
                 ansPerState.put("notDefined"     ,ansPerState.get("notDefined"     ) + urbanAndRuralHouseholds.getNotDefined().get());
 
+                //Q5:
+                ArrayList<IntWritable> value = seg.getValueOwnerOccupied().getValue();
+                for (int i = 0; i < 20; i++)
+                    ansPerState.put("valueOwnerOccupied" + String.valueOf(i), ansPerState.get("valueOwnerOccupied" + String.valueOf(i)) + value.get(i).get());
+
+                //Q6: calculate for answer in hashmap
+                ArrayList<IntWritable> valueR = seg.getValueOfRental().getValue();
+                for (int i = 0; i < 16; i++)
+                    ansPerState.put("valueRent" + String.valueOf(i), ansPerState.get("valueRent" + String.valueOf(i)) + valueR.get(i).get());
+
+                //Q7
+                ArrayList<IntWritable> distribution = seg.getRoomNumberPerHouse().getDistriburion();
+                ArrayList<IntWritable> weightedPart = seg.getRoomNumberPerHouse().getWeightedPart();
+                for (int i = 0; i < 9; i++){
+                    ansPerState.put("distribution" + String.valueOf(i), ansPerState.get("distribution" +String.valueOf(i)) + distribution.get(i).get());
+                    ansPerState.put("weightedPart" + String.valueOf(i), ansPerState.get("weightedPart" +String.valueOf(i))+ weightedPart.get(i).get());
+                }
+
+                //todo Q8
 
 
             }
@@ -202,7 +234,31 @@ public class UScensusAnalysisCombiner extends Reducer<Text, Segment, Text, Segme
 
 
 
-                //TODO:Q5
+                //Q5
+                ArrayList<IntWritable> value = new ArrayList<>();
+                for (int i = 0; i < 20; i++)
+                    value.add(new IntWritable(tableForOneState.get("valueOwnerOccupied" + String.valueOf(i))));
+                valueOwnerOccupied = new ValueOwnerOccupied(value);
+
+                //Q6
+                ArrayList<IntWritable> valueRent = new ArrayList<>();
+                for (int i = 0; i < 16; i++)
+                    valueRent.add(new IntWritable(tableForOneState.get("valueRent" + String.valueOf(i))));
+                valueOfRental = new ValueOfRental(valueRent);
+
+                //Q7: extract answer from hashmap entry and creat subclass
+                ArrayList<IntWritable> distribution = new ArrayList<>();
+                ArrayList<IntWritable> weightedPart = new ArrayList<>();
+                for (int i = 0; i < 9; i++){
+                    distribution.add(new IntWritable(tableForOneState.get("distribution" + String.valueOf(i))));
+                    weightedPart.add(new IntWritable(tableForOneState.get("weightedPart"+ String.valueOf(i))));
+                }
+                roomNumberPerHouse = new RoomNumberPerHouse(distribution, weightedPart);
+
+                //todo Q8
+
+
+
 
                 //create new (larger) segment Object, and emit the pair ("U.S.", newSegmentObject) out
                 Segment segmentObject = new Segment(state, tenure, populationBySex,genderByMaritalStatus,ageDistributionByGender_Hispanic,urbanAndRuralHouseholds,valueOwnerOccupied,valueOfRental,roomNumberPerHouse,statePopulation, elderlyPeople);

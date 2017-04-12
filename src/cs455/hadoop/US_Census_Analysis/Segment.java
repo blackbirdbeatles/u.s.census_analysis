@@ -440,7 +440,7 @@ class ValueOwnerOccupied implements Writable{
     }
 }
 
-//Q6: median pay of rent, 17 ranges of rental
+//Q6: median pay of rent, 16 ranges of rental  ** avoid "no cash rent"
 class ValueOfRental implements Writable{
 
 
@@ -452,13 +452,13 @@ class ValueOfRental implements Writable{
 
     public ValueOfRental(){
         value = new ArrayList<>();
-        for (int i = 0; i < 17; i++)
+        for (int i = 0; i < 16; i++)
             value.add(new IntWritable(0));
     }
 
     @Override
     public void readFields(DataInput in) throws IOException{
-        for (int i = 0; i < 17; i++)
+        for (int i = 0; i < 16; i++)
             value.get(i).readFields(in);
 
 
@@ -466,7 +466,7 @@ class ValueOfRental implements Writable{
 
     @Override
     public void write(DataOutput out) throws IOException{
-        for (int i = 0; i < 17; i++)
+        for (int i = 0; i < 16; i++)
             value.get(i).write(out);
 
     }
@@ -480,34 +480,48 @@ class ValueOfRental implements Writable{
 class RoomNumberPerHouse implements Writable{
 
     private ArrayList<IntWritable> distriburion;
+    private ArrayList<IntWritable> weightedPart;
 
-    public RoomNumberPerHouse(ArrayList<IntWritable> distriburion) {
+    public RoomNumberPerHouse(ArrayList<IntWritable> distriburion, ArrayList<IntWritable> weightedPart) {
+
 
         this.distriburion = distriburion;
+        this.weightedPart = weightedPart;
 
     }
 
     public RoomNumberPerHouse(){
         distriburion = new ArrayList<>();
-        for (int i=0; i < 9; i++)
+        weightedPart = new ArrayList<>();
+        for (int i=0; i < 9; i++) {
             distriburion.add(new IntWritable(0));
+            weightedPart.add(new IntWritable(0));
+        }
     }
 
     @Override
     public void readFields(DataInput in) throws IOException{
-        for (int i=0; i < 9; i++)
+        for (int i=0; i < 9; i++) {
             distriburion.get(i).readFields(in);
+            weightedPart.get(i).readFields(in);
+        }
     }
 
     @Override
     public void write(DataOutput out) throws IOException{
-        for (int i=0; i < 9; i++)
+        for (int i=0; i < 9; i++) {
             distriburion.get(i).write(out);
+            weightedPart.get(i).write(out);
+        }
     }
 
 
     public ArrayList<IntWritable> getDistriburion() {
         return distriburion;
+    }
+
+    public ArrayList<IntWritable> getWeightedPart() {
+        return weightedPart;
     }
 }
 

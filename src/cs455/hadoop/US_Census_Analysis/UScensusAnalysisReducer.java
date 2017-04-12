@@ -58,16 +58,23 @@ public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> 
 
 
 
-        //TODO:Q5
+        //Q5:
+        for (int i = 0 ; i < 20; i++)
+            ansPerState.put("valueOwnerOccupied" + String.valueOf(i), 0);
 
-
-        //problems insertion:
-       // problems.add("percentage of residnce were rented vs. owned");
-
+        //Q6
+        for (int i = 0 ; i < 16; i++)
+            ansPerState.put("valueRent" + String.valueOf(i), 0);
+        //Q7
+        for (int i = 0 ; i < 9; i++) {
+            ansPerState.put("distribution" + String.valueOf(i), 0);
+            ansPerState.put("weightedPart" + String.valueOf(i), 0);
+        }
+        //todo q8: initialize fields in hash map for one state to 0
 
 
         /*
-        //sum for Q4
+
         ansPerState.put("", 0);
         ansPerState.put("", 0);
         ansPerState.put("", 0);
@@ -126,6 +133,27 @@ public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> 
             ansPerState.put("urbanHouseholds",ansPerState.get("urbanHouseholds") + urbanAndRuralHouseholds.getUrbanHouseholds().get());
             ansPerState.put("ruralHouseholds",ansPerState.get("ruralHouseholds") + urbanAndRuralHouseholds.getRuralHouseholds().get());
             ansPerState.put("notDefined"     ,ansPerState.get("notDefined"     ) + urbanAndRuralHouseholds.getNotDefined().get());
+
+            //Q5:
+            ArrayList<IntWritable> value = seg.getValueOwnerOccupied().getValue();
+            for (int i = 0; i < 20; i++)
+                ansPerState.put("valueOwnerOccupied" + String.valueOf(i), ansPerState.get("valueOwnerOccupied" + String.valueOf(i)) + value.get(i).get());
+
+
+            //Q6
+            ArrayList<IntWritable> valueR = seg.getValueOfRental().getValue();
+            for (int i = 0; i < 16; i++)
+                ansPerState.put("valueRent" + String.valueOf(i), ansPerState.get("valueRent" + String.valueOf(i)) + valueR.get(i).get());
+            //Q7
+            ArrayList<IntWritable> distribution = seg.getRoomNumberPerHouse().getDistriburion();
+            ArrayList<IntWritable> weightedPart = seg.getRoomNumberPerHouse().getWeightedPart();
+            for (int i = 0; i < 9; i++) {
+                ansPerState.put("distribution" + String.valueOf(i), ansPerState.get("distribution" + String.valueOf(i)) + distribution.get(i).get());
+                ansPerState.put("weightedPart" + String.valueOf(i), ansPerState.get("weightedPart" + String.valueOf(i)) + weightedPart.get(i).get());
+            }
+
+            //todo q8: calculation: add number in object to hashmap
+
 
         }
 
@@ -292,8 +320,179 @@ public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> 
             context.write(new Text("    Rural"), resultRural);
         }
 
-        //TODO:Q5
-        
+        //Q5:
+        context.write(new Text("Q5: Median value of house occupied by owners"), spaceValue);
+        for (Map.Entry<String, HashMap<String,Integer>> entry : ans.entrySet()){
+            Text state = new Text(entry.getKey());
+            HashMap<String ,Integer> tableForOneState = entry.getValue();
+
+            //get variable from table
+            ArrayList<Integer> v = new ArrayList<>();
+            int totalOwners = 0;
+            for (int i = 0; i < 20; i++) {
+                v.add(tableForOneState.get("valueOwnerOccupied" + String.valueOf(i)));
+                totalOwners +=v.get(i);
+            }
+
+            //statistical arithmetics
+            int count = 0;
+            int medianIndex = 0;
+            for (int i = 0; i < 20; i++){
+                count += v.get(i);
+                if (count > totalOwners/2)
+                {
+                    medianIndex = i;
+                    break;
+                }
+            }
+
+            //convert to String str
+            ArrayList<String> indexToValue = new ArrayList<>();
+            indexToValue.add("Less than $15,000");
+            indexToValue.add("$15,000 - $19,999");
+            indexToValue.add("$20,000 - $24,999");
+            indexToValue.add("$25,000 - $29,999");
+            indexToValue.add("$30,000 - $34,999");
+            indexToValue.add("$35,000 - $39,999");
+            indexToValue.add("$40,000 - $44,999");
+            indexToValue.add("$45,000 - $49,999");
+            indexToValue.add("$50,000 - $59,999");
+            indexToValue.add("$60,000 - $74,999");
+            indexToValue.add("$75,000 - $99,999");
+            indexToValue.add("$100,000 - $124,999");
+            indexToValue.add("$125,000 - $149,999");
+            indexToValue.add("$150,000 - $174,999");
+            indexToValue.add("$175,000 - $199,999");
+            indexToValue.add("$200,000 - $249,999");
+            indexToValue.add("$250,000 - $299,999");
+            indexToValue.add("$300,000 - $399,999");
+            indexToValue.add("$400,000 - $499,999");
+            indexToValue.add("$500,000 or more   ");
+            Text medianValue = new Text(indexToValue.get(medianIndex));
+
+            //result print (with format)
+            context.write(state, spaceValue);
+            context.write(new Text("    median value:"), medianValue);
+
+        }
+
+        //Q6
+        context.write(new Text("Q6: Median value of rent"), spaceValue);
+        for (Map.Entry<String, HashMap<String,Integer>> entry : ans.entrySet()){
+            Text state = new Text(entry.getKey());
+            HashMap<String ,Integer> tableForOneState = entry.getValue();
+
+            //get variable from table
+            ArrayList<Integer> v = new ArrayList<>();
+            int totalRent = 0;
+            for (int i = 0; i < 16; i++) {
+                v.add(tableForOneState.get("valueRent" + String.valueOf(i)));
+                totalRent +=v.get(i);
+            }
+
+            //statistical arithmetics
+            int count = 0;
+            int medianIndex = 0;
+            for (int i = 0; i < 16; i++){
+                count += v.get(i);
+                if (count > totalRent/2)
+                {
+                    medianIndex = i;
+                    break;
+                }
+            }
+
+            //convert to String str
+            ArrayList<String> indexToValue = new ArrayList<>();
+            indexToValue.add("Less than $100");
+            indexToValue.add("$100  to $149 ");
+            indexToValue.add("$150  to $199 ");
+            indexToValue.add("$200  to $249 ");
+            indexToValue.add("$250  to $299 ");
+            indexToValue.add("$300  to $349 ");
+            indexToValue.add("$350  to $399 ");
+            indexToValue.add("$400  to $449 ");
+            indexToValue.add("$450  to $499 ");
+            indexToValue.add("$500  to $549 ");
+            indexToValue.add("$550  to $599 ");
+            indexToValue.add("$600  to $649 ");
+            indexToValue.add("$650  to $699 ");
+            indexToValue.add("$700  to $749 ");
+            indexToValue.add("$750  to $999 ");
+            indexToValue.add("$1000 or more ");
+            Text medianValue = new Text(indexToValue.get(medianIndex));
+
+            //result print (with format)
+            context.write(state, spaceValue);
+            context.write(new Text("    median rent:"), medianValue);
+
+        }
+
+
+        //Q7
+        context.write(new Text("Q7: 95th percentile of average room number per house"), spaceValue);
+
+        //for certain state (entry of hashmap), calculate total rent house and total room number of all these housese
+
+        ArrayList<StateToAverage> aList = new ArrayList<>();
+        for (Map.Entry<String, HashMap<String,Integer>> entry : ans.entrySet()) {
+           // Text state = new Text(entry.getKey());
+            String state = entry.getKey();
+            HashMap<String, Integer> tableForOneState = entry.getValue();
+
+            //get variable from table
+            ArrayList<Integer> distribution = new ArrayList<>();
+            ArrayList<Integer> weightedPart = new ArrayList<>();
+
+            for (int i = 0; i < 9; i++) {
+                distribution.add(tableForOneState.get("distribution" + String.valueOf(i)));
+                weightedPart.add(tableForOneState.get("weightedPart" + String.valueOf(i)));
+            }
+
+            //total rent house and total rooms
+            int totalHouse = 0;
+            int totalRooms = 0;
+            Double averageRoomNumber = new Double(-1);
+            for (int i = 0; i < 9; i++) {
+                totalHouse += distribution.get(i);
+                totalRooms += weightedPart.get(i);
+            }
+            if (totalHouse!= 0) {
+                averageRoomNumber = totalRooms * 1.0 / totalHouse;
+                aList.add(new StateToAverage(state, averageRoomNumber));
+            }
+        }
+
+        //get sum of average room of each state
+        Double sumOfAverage = 0.0;
+        for (int i = 0; i < aList.size(); i++)
+            sumOfAverage += aList.get(i).getAverage();
+
+
+        //to calculate the 95th percentile
+        Collections.sort(aList);
+        Double exceedRoomNumber = Math.ceil(sumOfAverage * 0.95);
+        double count = 0.0;
+        StateToAverage theOne = new StateToAverage("Initialization", aList.size()+0.33);
+        for (int i = 0; i < aList.size();i++) {
+            //context.write(new Text("average of State"), new Text(String.valueOf(aList.get(i).getAverage())));
+            count+= aList.get(i).getAverage();
+            if (count >= exceedRoomNumber){
+                theOne = aList.get(i);
+                break;
+            }
+        }
+        Text theState = new Text(String.valueOf(theOne.getState()));
+        Text pencentile95th = new Text(String.valueOf(theOne.getAverage()));
+        //result print (with format)
+        context.write(theState, pencentile95th);
+
+
+
+
+
+        //todo q8: print out
+
 
 
 
