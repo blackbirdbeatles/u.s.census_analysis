@@ -25,13 +25,9 @@ public class UScensusAnalysisJob {
             job.setJarByClass(UScensusAnalysisJob.class);
             // Mapper
             job.setMapperClass(UScensusAnalysisMapper.class);
+            // Combiner. We use the reducer as the combiner in this case.
+            job.setCombinerClass(UScensusAnalysisCombiner.class);
 
-            //TODO: think whether we need combiner this job
-            /*
-
-                // Combiner. We use the reducer as the combiner in this case.
-                job.setCombinerClass(WordCountReducer.class);
-            */
 
             // Reducer
             job.setReducerClass(UScensusAnalysisReducer.class);

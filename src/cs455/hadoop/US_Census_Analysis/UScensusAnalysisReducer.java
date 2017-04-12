@@ -16,8 +16,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Reducer: Input to the reducer is the output from the mapper. It receives ("U.S.", list<Segment> ) pairs.
- * Sums up individual fields according to name of states. Emits <Name of State, List<Answer> pairs.
+ * Reducer: Input to the reducer is the output from the mapper. It receives ("U.S.", SegmentObject ) pairs.
+ * Sums up individual fields according to name of states. Emits (Name of State, List<Answer>) pairs.
  */
 public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> {
 
@@ -296,6 +296,7 @@ public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> 
         }
 
         //TODO:Q5
+        
 
 
 
