@@ -46,13 +46,12 @@ public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> 
         ansPerState.put("aged18andBelow18Men", 0);
         ansPerState.put("aged19to29Men", 0);
         ansPerState.put("aged30to39Men", 0);
-        ansPerState.put("populationOfHispanicsMen", 0);
-        ansPerState.put("totalMen", 0);
+        ansPerState.put("agedAbove40Men", 0);
+
         ansPerState.put("aged18andBelow18Women", 0);
         ansPerState.put("aged19to29Women", 0);
         ansPerState.put("aged30to39Women", 0);
-        ansPerState.put("populationOfHispanicsWomen", 0);
-        ansPerState.put("totalWomen", 0);
+        ansPerState.put("agedAbove40Women", 0);
 
 
         //problems insertion:
@@ -92,22 +91,28 @@ public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> 
             HashMap<String,Integer> ansPerState = ans.get(state);
             //Q1:
             Tenure tenure = seg.getTenure();
-            if (tenure!=null){
                 ansPerState.put("ownerOccupied", ansPerState.get("ownerOccupied") + tenure.getOwnerOccupied().get());
                 ansPerState.put("renterOccupied", ansPerState.get("renterOccupied") + tenure.getRenterOccupied().get());
-            }
+
             //Q2:
             PopulationBySex populationBySex = seg.getPopulationBySex();
-            if (populationBySex!=null) {
                 ansPerState.put("totalMen", ansPerState.get("totalMen") + populationBySex.getTotalMen().get());
                 ansPerState.put("totalWomen", ansPerState.get("totalWomen") + populationBySex.getTotalWomen().get());
-            }
 
             GenderByMaritalStatus genderByMaritalStatus = seg.getGenderByMaritalStatus();
-            if (genderByMaritalStatus!=null){
                 ansPerState.put("neverMarriedMen" ,ansPerState.get("neverMarriedMen" ) + genderByMaritalStatus.getNeverMarriedMen().get());
                 ansPerState.put("neverMarriedWomen",ansPerState.get("neverMarriedWomen") + genderByMaritalStatus.getNeverMarriedWomen().get());
-            }
+
+            //Q3:
+            AgeDistributionByGender_Hispanic ageDistributionByGender_hispanic = seg.getAgeDistributionByGender_hispanic();
+            ansPerState.put("aged18andBelow18Men"   ,ansPerState.get("aged18andBelow18Men"   ) + ageDistributionByGender_hispanic.getAged18andBelow18Men().get());
+            ansPerState.put("aged19to29Men"         ,ansPerState.get("aged19to29Men"         ) + ageDistributionByGender_hispanic.getAged19to29Men().get());
+            ansPerState.put("aged30to39Men"         ,ansPerState.get("aged30to39Men"         ) + ageDistributionByGender_hispanic.getAged30to39Men().get());
+            ansPerState.put("agedAbove40Men"        ,ansPerState.get("agedAbove40Men"        ) + ageDistributionByGender_hispanic.getAgedAbove40Men().get());
+            ansPerState.put("aged18andBelow18Women" ,ansPerState.get("aged18andBelow18Women" ) + ageDistributionByGender_hispanic.getAged18andBelow18Women().get());
+            ansPerState.put("aged19to29Women"       ,ansPerState.get("aged19to29Women"       ) + ageDistributionByGender_hispanic.getAged19to29Women().get());
+            ansPerState.put("aged30to39Women"       ,ansPerState.get("aged30to39Women"       ) + ageDistributionByGender_hispanic.getAged30to39Women().get());
+            ansPerState.put("agedAbove40Women"      ,ansPerState.get("agedAbove40Women"      ) + ageDistributionByGender_hispanic.getAgedAbove40Women().get());
 
         }
 

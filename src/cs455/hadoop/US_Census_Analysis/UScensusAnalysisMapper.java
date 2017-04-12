@@ -86,17 +86,31 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Seg
                     a30to39w += Integer.valueOf(segment.substring(i+279, i+279+9));
                 }
 
+                //pre-process for agedAbove40Men, agedAbove40Women
+                int a40m = 0, a40w = 0;
+                for (int i = 4044; i <=4134; i+=9)   {
+                    a40m += Integer.valueOf(segment.substring(i, i+9));
+                    a40w += Integer.valueOf(segment.substring(i+279, i+279+9));
+                }
+
                 IntWritable aged18andBelow18Men        = new IntWritable(a18andBelow18m);
                 IntWritable aged19to29Men              = new IntWritable(a19to29m);
                 IntWritable aged30to39Men              = new IntWritable(a30to39m);
+                IntWritable agedAbove40Men             = new IntWritable(a40m);
 
                 IntWritable aged18andBelow18Women      = new IntWritable(a18andBelow18w);
                 IntWritable aged19to29Women            = new IntWritable(a19to29w);
                 IntWritable aged30to39Women            = new IntWritable(a30to39w);
+                IntWritable agedAbove40Women           = new IntWritable(a40w);
 
-                ageDistributionByGender_Hispanic = new AgeDistributionByGender_Hispanic(aged18andBelow18Men,aged19to29Men ,aged30to39Men, aged18andBelow18Women, aged19to29Women, aged30to39Women);
+                ageDistributionByGender_Hispanic = new AgeDistributionByGender_Hispanic(aged18andBelow18Men,aged19to29Men ,aged30to39Men, agedAbove40Men, aged18andBelow18Women, aged19to29Women, aged30to39Women, agedAbove40Women);
 
             }
+
+
+            
+
+
 
             //create the Segmen object, emit <"U.S.", segmentObject>
             Segment segmentObject = new Segment(new Text(state), tenure, populationBySex,genderByMaritalStatus,ageDistributionByGender_Hispanic,urbanAndRuralHouseholds,valueOwnerOccupied,valueOfRental,roomNumberPerHouse,statePopulation, elderlyPeople);
