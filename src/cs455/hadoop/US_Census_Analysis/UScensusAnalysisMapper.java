@@ -107,6 +107,23 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Seg
 
             }
 
+            //Q4:  urban vs rural
+            if (logicalRecordPartNumber.equals("0002")) {
+
+                //get the sum of urban
+                int urban = 0;
+                for (int i = 1821; i <=1830; i+=9)
+                    urban += Integer.valueOf(segment.substring(i, i+9));
+                //get rural, notDefine
+                int rural = Integer.valueOf(segment.substring(1839, 1839+9));
+                int notDefined = Integer.valueOf(segment.substring(1848, 1848+9));
+
+
+
+
+            }
+
+
 
             
 

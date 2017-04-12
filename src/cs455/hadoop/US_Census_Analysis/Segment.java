@@ -359,12 +359,12 @@ class UrbanAndRuralHouseholds implements Writable{
 
     private IntWritable urbanHouseholds;
     private IntWritable ruralHouseholds;
-    private IntWritable totalHouseholds;
+    private IntWritable notDefined;
 
-    public UrbanAndRuralHouseholds(IntWritable urbanHouseholds, IntWritable ruralHouseholds, IntWritable totalHouseholds) {
+    public UrbanAndRuralHouseholds(IntWritable urbanHouseholds, IntWritable ruralHouseholds, IntWritable notDefined) {
         this.urbanHouseholds = urbanHouseholds;
         this.ruralHouseholds = ruralHouseholds;
-        this.totalHouseholds = totalHouseholds;
+        this.notDefined      = notDefined;
     }
 
 
@@ -372,7 +372,7 @@ class UrbanAndRuralHouseholds implements Writable{
 
        urbanHouseholds = new IntWritable(0);
        ruralHouseholds = new IntWritable(0);
-       totalHouseholds = new IntWritable(0);
+       notDefined      = new IntWritable(0);
 
     }
     @Override
@@ -380,7 +380,7 @@ class UrbanAndRuralHouseholds implements Writable{
 
         urbanHouseholds.readFields(in);
         ruralHouseholds.readFields(in);
-        totalHouseholds.readFields(in);
+             notDefined.readFields(in);
 
     }
 
@@ -389,8 +389,7 @@ class UrbanAndRuralHouseholds implements Writable{
         
         urbanHouseholds.write(out);
         ruralHouseholds.write(out);
-        totalHouseholds.write(out);
-
+             notDefined.write(out);
 
     }
 
@@ -402,8 +401,8 @@ class UrbanAndRuralHouseholds implements Writable{
         return ruralHouseholds;
     }
 
-    public IntWritable getTotalHouseholds() {
-        return totalHouseholds;
+    public IntWritable getNotDefined() {
+        return notDefined;
     }
 }
 
