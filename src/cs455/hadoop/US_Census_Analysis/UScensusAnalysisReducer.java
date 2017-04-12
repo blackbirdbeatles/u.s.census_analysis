@@ -54,6 +54,16 @@ public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> 
         ansPerState.put("agedAbove40Women", 0);
 
 
+        //Q4:
+        ansPerState.put("urbanHouseholds",0);
+        ansPerState.put("ruralHouseholds",0);
+        ansPerState.put("notDefined"     ,0);
+
+
+
+        //TODO:Q5
+
+
         //problems insertion:
        // problems.add("percentage of residnce were rented vs. owned");
 
@@ -113,6 +123,12 @@ public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> 
             ansPerState.put("aged19to29Women"       ,ansPerState.get("aged19to29Women"       ) + ageDistributionByGender_hispanic.getAged19to29Women().get());
             ansPerState.put("aged30to39Women"       ,ansPerState.get("aged30to39Women"       ) + ageDistributionByGender_hispanic.getAged30to39Women().get());
             ansPerState.put("agedAbove40Women"      ,ansPerState.get("agedAbove40Women"      ) + ageDistributionByGender_hispanic.getAgedAbove40Women().get());
+
+            //Q4:
+            UrbanAndRuralHouseholds urbanAndRuralHouseholds = seg.getUrbanAndRuralHouseholds();
+            ansPerState.put("urbanHouseholds",ansPerState.get("urbanHouseholds") + urbanAndRuralHouseholds.getUrbanHouseholds().get());
+            ansPerState.put("ruralHouseholds",ansPerState.get("ruralHouseholds") + urbanAndRuralHouseholds.getRuralHouseholds().get());
+            ansPerState.put("notDefined"     ,ansPerState.get("notDefined"     ) + urbanAndRuralHouseholds.getNotDefined().get());
 
         }
 
@@ -250,6 +266,36 @@ public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> 
             context.write(new Text("    Aged 30-39 Women"), resultA30Women);
         }
 
+        //Q4:
+        context.write(new Text("Q4: Urban vs Rural"), spaceValue);
+
+        for (Map.Entry<String, HashMap<String,Integer>> entry : ans.entrySet()){
+            Text state = new Text(entry.getKey());
+            HashMap<String ,Integer> tableForOneState = entry.getValue();
+
+            //get variable from table
+            Integer urbanHouseholds = tableForOneState.get("urbanHouseholds");
+            Integer ruralHouseholds = tableForOneState.get("ruralHouseholds");
+            Integer notDefined      = tableForOneState.get("notDefined"     );
+
+            //statistical arithmetics
+            Integer totalHouseholds = urbanHouseholds + ruralHouseholds + notDefined;
+            Double urbanRate = (urbanHouseholds*1.0  / totalHouseholds )*100;
+            Double ruralRate = (ruralHouseholds*1.0  / totalHouseholds) *100;
+
+            //convert to String str
+            String strUrban = Double.valueOf(urbanRate)+"%";
+            String strRural  = Double.valueOf(ruralRate) + "%";
+            Text resultUrban = new Text(strUrban);
+            Text resultRural = new Text(strRural);
+
+            //result print (with format)
+            context.write(state, spaceValue);
+            context.write(new Text("    Urban"), resultUrban);
+            context.write(new Text("    Rural"), resultRural);
+        }
+
+        //TODO:Q5
 
 
 

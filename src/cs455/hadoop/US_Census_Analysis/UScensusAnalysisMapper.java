@@ -116,12 +116,16 @@ public class UScensusAnalysisMapper extends Mapper<LongWritable, Text, Text, Seg
                     urban += Integer.valueOf(segment.substring(i, i+9));
                 //get rural, notDefine
                 int rural = Integer.valueOf(segment.substring(1839, 1839+9));
-                int notDefined = Integer.valueOf(segment.substring(1848, 1848+9));
+                int notD = Integer.valueOf(segment.substring(1848, 1848+9));
 
+                IntWritable urbanHouseholds = new IntWritable(urban);
+                IntWritable ruralHouseholds = new IntWritable(rural);
+                IntWritable notDefined      = new IntWritable(notD);
 
-
-
+                urbanAndRuralHouseholds = new UrbanAndRuralHouseholds(urbanHouseholds, ruralHouseholds, notDefined);
             }
+
+            //TODO:Q5
 
 
 
