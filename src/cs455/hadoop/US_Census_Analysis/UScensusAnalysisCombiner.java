@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by MyGarden on 4/11/17.
@@ -19,7 +20,7 @@ import java.util.Map;
 
 public class UScensusAnalysisCombiner extends Reducer<Text, Segment, Text, Segment> {
 
-        HashMap<String, HashMap<String, Integer>> ans;
+        TreeMap<String, HashMap<String, Integer>> ans;
         ArrayList<String> problems;
 
 
@@ -90,7 +91,7 @@ public class UScensusAnalysisCombiner extends Reducer<Text, Segment, Text, Segme
 
         protected void reduce(Text key, Iterable<Segment> values, Context context) throws IOException, InterruptedException {
             //define the Hashtable ans
-            ans = new HashMap<>();
+            ans = new TreeMap<>();
 
 
             //Go through the all segment object in current machine. generate hashmap with key of all states in U.S. Make sure all fields of a certain state sum up data from current machine segment.

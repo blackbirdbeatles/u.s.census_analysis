@@ -10,10 +10,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Reducer: Input to the reducer is the output from the mapper. It receives ("U.S.", SegmentObject ) pairs.
@@ -21,7 +18,7 @@ import java.util.Map;
  */
 public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> {
 
-    HashMap<String, HashMap<String, Integer>> ans;
+    TreeMap<String, HashMap<String, Integer>> ans;
     ArrayList<String> problems;
 
 
@@ -92,7 +89,7 @@ public class UScensusAnalysisReducer extends Reducer<Text, Segment, Text, Text> 
 
     protected void reduce(Text key, Iterable<Segment> values, Context context) throws IOException, InterruptedException {
         //define the Hashtable ans
-        ans = new HashMap<>();
+        ans = new TreeMap<>();
 
         for (Segment seg : values) {
             String state = seg.getState().toString();
