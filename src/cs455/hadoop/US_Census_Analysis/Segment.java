@@ -42,6 +42,24 @@ public class Segment implements Writable {
         this.elderlyPeople = elderlyPeople;
     }
 
+    public Segment(){
+
+        state = new Text("");
+
+        tenure = new Tenure();
+
+        populationBySex = new PopulationBySex();
+        genderByMaritalStatus = new GenderByMaritalStatus();
+        ageDistributionByGender_hispanic = new AgeDistributionByGender_Hispanic();
+        urbanAndRuralHouseholds = new UrbanAndRuralHouseholds();
+        valueOwnerOccupied = new ValueOwnerOccupied();
+        valueOfRental = new ValueOfRental();
+        roomNumberPerHouse = new RoomNumberPerHouse();
+        statePopulation = new StatePopulation();
+        elderlyPeople = new ElderlyPeople();
+
+    }
+
     @Override
     public void readFields(DataInput dataInput) throws IOException {
         state.readFields(dataInput);
@@ -202,8 +220,8 @@ class GenderByMaritalStatus implements Writable{
 
 
     public GenderByMaritalStatus(IntWritable neverMarriedMen, IntWritable neverMarriedWomen) {
-        neverMarriedMen   = neverMarriedMen;
-        neverMarriedWomen = neverMarriedWomen;
+        this.neverMarriedMen   = neverMarriedMen;
+        this.neverMarriedWomen = neverMarriedWomen;
     }
 
     public GenderByMaritalStatus(){
@@ -241,37 +259,34 @@ class AgeDistributionByGender_Hispanic implements Writable{
     private IntWritable aged18andBelow18Men;
     private IntWritable aged19to29Men;
     private IntWritable aged30to39Men;
-    private IntWritable populationOfHispanicsMen;
-    private IntWritable totalMen;
+    private IntWritable agedAbove40Men;
+
     private IntWritable aged18andBelow18Women;
     private IntWritable aged19to29Women;
     private IntWritable aged30to39Women;
-    private IntWritable populationOfHispanicsWomen;
-    private IntWritable totalWomen;
+    private IntWritable agedAbove40Women;
 
-    public AgeDistributionByGender_Hispanic(IntWritable aged18andBelow18Men, IntWritable aged19to29Men, IntWritable aged30to39Men, IntWritable populationOfHispanicsMen, IntWritable totalMen, IntWritable aged18andBelow18Women, IntWritable aged19to29Women, IntWritable aged30to39Women, IntWritable populationOfHispanicsWomen, IntWritable totalWomen) {
+    public AgeDistributionByGender_Hispanic(IntWritable aged18andBelow18Men, IntWritable aged19to29Men, IntWritable aged30to39Men, IntWritable agedAbove40Men, IntWritable aged18andBelow18Women, IntWritable aged19to29Women, IntWritable aged30to39Women, IntWritable agedAbove40Women) {
         this.aged18andBelow18Men = aged18andBelow18Men;
         this.aged19to29Men = aged19to29Men;
         this.aged30to39Men = aged30to39Men;
-        this.populationOfHispanicsMen = populationOfHispanicsMen;
-        this.totalMen = totalMen;
+        this.agedAbove40Men = agedAbove40Men;
+
         this.aged18andBelow18Women = aged18andBelow18Women;
         this.aged19to29Women = aged19to29Women;
         this.aged30to39Women = aged30to39Women;
-        this.populationOfHispanicsWomen = populationOfHispanicsWomen;
-        this.totalWomen = totalWomen;
+        this.agedAbove40Women = agedAbove40Women;
     }
     public AgeDistributionByGender_Hispanic(){
          aged18andBelow18Men       = new IntWritable(0);
          aged19to29Men             = new IntWritable(0);
          aged30to39Men             = new IntWritable(0);
-         populationOfHispanicsMen  = new IntWritable(0);
-         totalMen                  = new IntWritable(0);
+         agedAbove40Men            = new IntWritable(0);
+
          aged18andBelow18Women     = new IntWritable(0);
          aged19to29Women           = new IntWritable(0);
          aged30to39Women           = new IntWritable(0);
-         populationOfHispanicsWomen= new IntWritable(0);
-         totalWomen                = new IntWritable(0);
+         agedAbove40Women          = new IntWritable(0);
     }
 
 
@@ -283,15 +298,12 @@ class AgeDistributionByGender_Hispanic implements Writable{
        aged18andBelow18Men.readFields(in);
        aged19to29Men.readFields(in);
        aged30to39Men.readFields(in);
-       populationOfHispanicsMen.readFields(in);
-       totalMen.readFields(in);
+       agedAbove40Men.readFields(in);
 
        aged18andBelow18Women.readFields(in);
        aged19to29Women.readFields(in);
        aged30to39Women.readFields(in);
-       populationOfHispanicsWomen.readFields(in);
-       totalWomen.readFields(in);
-
+       agedAbove40Women.readFields(in);
 
     }
 
@@ -300,14 +312,12 @@ class AgeDistributionByGender_Hispanic implements Writable{
        aged18andBelow18Men.write(out);
        aged19to29Men.write(out);
        aged30to39Men.write(out);
-       populationOfHispanicsMen.write(out);
-       totalMen.write(out);
+       agedAbove40Men.write(out);
 
        aged18andBelow18Women.write(out);
        aged19to29Women.write(out);
        aged30to39Women.write(out);
-       populationOfHispanicsWomen.write(out);
-       totalWomen.write(out);
+       agedAbove40Women.write(out);
 
     }
 
@@ -323,14 +333,6 @@ class AgeDistributionByGender_Hispanic implements Writable{
         return aged30to39Men;
     }
 
-    public IntWritable getPopulationOfHispanicsMen() {
-        return populationOfHispanicsMen;
-    }
-
-    public IntWritable getTotalMen() {
-        return totalMen;
-    }
-
     public IntWritable getAged18andBelow18Women() {
         return aged18andBelow18Women;
     }
@@ -343,12 +345,12 @@ class AgeDistributionByGender_Hispanic implements Writable{
         return aged30to39Women;
     }
 
-    public IntWritable getPopulationOfHispanicsWomen() {
-        return populationOfHispanicsWomen;
+    public IntWritable getAgedAbove40Men() {
+        return agedAbove40Men;
     }
 
-    public IntWritable getTotalWomen() {
-        return totalWomen;
+    public IntWritable getAgedAbove40Women() {
+        return agedAbove40Women;
     }
 }
 
@@ -415,6 +417,7 @@ class ValueOwnerOccupied implements Writable{
     }
 
     public ValueOwnerOccupied(){
+        value = new ArrayList<>();
         for (int i = 0; i < 20; i++)
             value.add(new IntWritable(0));
     }
@@ -449,6 +452,7 @@ class ValueOfRental implements Writable{
     }
 
     public ValueOfRental(){
+        value = new ArrayList<>();
         for (int i = 0; i < 17; i++)
             value.add(new IntWritable(0));
     }
@@ -485,6 +489,7 @@ class RoomNumberPerHouse implements Writable{
     }
 
     public RoomNumberPerHouse(){
+        distriburion = new ArrayList<>();
         for (int i=0; i < 9; i++)
             distriburion.add(new IntWritable(0));
     }
